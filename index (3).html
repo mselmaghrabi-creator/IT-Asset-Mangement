@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منظومة إدارة أصول الـ IT | شركة مرني</title>
+    <!-- Bootstrap 5 RTL CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" id="bootstrapCss">
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Font Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- JsBarcode (1D Barcode) -->
+    <!-- JsBarcode removed (QR Code Only) -->
+    <!-- QRCode.js (2D QR Code) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --bg-deep: #090e1a;
+            --bg-card: rgba(18, 26, 45, 0.94);
+            --border-glow: rgba(56, 189, 248, 0.35);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #0284c7;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at 10% 10%, #15223f 0%, #090e1a 100%) fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .card-custom {
+            background: var(--bg-card) !important;
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+            transition: all 0.25s ease;
+        }
+
+        .card-custom:hover {
+            border-color: var(--border-glow) !important;
+            transform: translateY(-2px);
+        }
+
+        .sidebar {
+            background: rgba(10, 15, 28, 0.98) !important;
+            min-height: 100vh;
+            border-inline-end: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 1050;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            border-radius: 12px;
+            margin: 4px 12px;
+            padding: 10px 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        .nav-link i {
+            width: 24px;
+            font-size: 16px;
+            margin-inline-end: 10px;
+        }
+
+        .brand-logo-img {
+            height: 52px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+        }
+
+        .morni-brand-badge {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 6px 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+        }
+
+        /* كروت الواجهة المستوحاة من AssetIT (الصورة 2) */
+        .assetit-card {
+            border-radius: 16px;
+            padding: 20px;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .assetit-card:hover { transform: scale(1.02); }
+        .assetit-card h2 { font-size: 38px; font-weight: 900; margin-bottom: 4px; }
+        .assetit-card p { font-size: 15px; font-weight: 700; margin-bottom: 0; opacity: 0.9; }
+        .assetit-card i { font-size: 55px; opacity: 0.35; }
+        .bg-card-teal { background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%); }
+        .bg-card-crimson { background: linear-gradient(135deg, #e63946 0%, #d62828 100%); }
+        .bg-card-blue { background: linear-gradient(135deg, #3a86ff 0%, #1d3557 100%); }
+        .bg-card-purple { background: linear-gradient(135deg, #7209b7 0%, #480ca8 100%); }
+
+        /* بطاقات المؤشرات الستة مع المنحنيات (AssetPrime - الصورة 1) */
+        .sparkline-card {
+            background: rgba(18, 26, 45, 0.95);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 16px;
+            position: relative;
+        }
+        .sparkline-card .num { font-size: 26px; font-weight: 800; color: #ffffff; }
+        .sparkline-card .trend-up { color: #10b981; font-size: 12px; font-weight: 700; }
+        .sparkline-card .trend-down { color: #ef4444; font-size: 12px; font-weight: 700; }
+        .sparkline-svg { width: 100%; height: 35px; stroke-width: 2.5; fill: none; }
+
+        /* Operations Attention Center (AssetPrime - الصورة 1) */
+        .attention-card {
+            background: rgba(23, 33, 56, 0.85);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 4px solid #334155;
+            transition: all 0.2s ease;
+        }
+        .attention-card:hover { transform: translateY(-2px); }
+        .attention-card.b-red { border-bottom-color: #ef4444; }
+        .attention-card.b-orange { border-bottom-color: #f97316; }
+        .attention-card.b-purple { border-bottom-color: #8b5cf6; }
+        .attention-card.b-blue { border-bottom-color: #38bdf8; }
+        .attention-card.b-yellow { border-bottom-color: #eab308; }
+
+        .attention-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .table-custom thead th {
+            background: rgba(23, 33, 56, 0.95) !important;
+            color: #38bdf8;
+            font-weight: 800;
+            font-size: 13px;
+            border: none;
+            padding: 12px;
+        }
+
+        .table-custom tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .badge-inuse { background-color: #0284c7; color: #fff; }
+        .badge-stock { background-color: #10b981; color: #fff; }
+        .badge-maint { background-color: #f59e0b; color: #fff; }
+        .badge-branch { background: rgba(51, 65, 85, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); }
+
+        .tab-section { display: none; }
+        .tab-section.active { display: block; }
+
+        /* Timeline styles */
+        .timeline { position: relative; padding: 15px 0; list-style: none; }
+        .timeline:before { content: ''; position: absolute; top: 0; bottom: 0; right: 30px; width: 3px; background: #334155; }
+        .timeline-item { position: relative; margin-bottom: 22px; }
+        .timeline-badge { position: absolute; right: 15px; top: 0; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; color: #fff; z-index: 2; }
+        .timeline-panel { margin-right: 65px; background: rgba(23, 33, 56, 0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 18px; }
+
+        @media (max-width: 767.98px) {
+            .sidebar {
+                position: fixed !important;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 290px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease-in-out;
+                z-index: 1060 !important;
+                display: flex !important;
+                box-shadow: -5px 0 25px rgba(0,0,0,0.7);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0) !important;
+            }
+            .mobile-sidebar-backdrop {
+                display: none;
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(0,0,0,0.65);
+                z-index: 1055;
+            }
+            .mobile-sidebar-backdrop.active {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="mobileSidebarBackdrop" class="mobile-sidebar-backdrop" onclick="toggleMobileSidebar()"></div>
+
+<!-- شريط الموبايل -->
+<header class="navbar navbar-dark bg-dark sticky-top p-2 d-md-none border-bottom border-secondary">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <button class="btn btn-outline-secondary text-white px-2 py-1" onclick="toggleMobileSidebar()">
+            <i class="fa-solid fa-bars fa-lg"></i>
+        </button>
+        <div class="morni-brand-badge py-1 px-2">
+            <img src="data:image/png;base64,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" alt="Morni Logo" style="height: 32px;">
+        </div>
+        <button class="btn btn-sm btn-warning text-dark fw-bold" onclick="openAddTicketModal()">
+            <i class="fa-solid fa-headset me-1"></i> بلاغ عطل
+        </button>
+    </div>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- القائمة الجانبية -->
+        <nav class="col-md-3 col-lg-2 sidebar p-0" id="mainSidebar">
+            <div class="p-3 text-center border-bottom border-secondary">
+                <div class="morni-brand-badge mb-2">
+                    <img src="data:image/png;base64,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" alt="Morni Logo" class="brand-logo-img">
+                </div>
+                <h6 class="fw-bold text-white mb-0" style="font-size: 13.5px;">إدارة تقنية المعلومات IT</h6>
+                <small class="text-secondary" style="font-size: 11px;">منظومة إدارة أصول الفروع المتكاملة</small>
+            </div>
+
+            <div class="pt-2 flex-grow-1">
+                <ul class="nav flex-column" id="sidebarMenu">
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link active" onclick="switchTab('dashboard')">
+                            <i class="fa-solid fa-chart-pie"></i> لوحة التحكم والمؤشرات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('assets')">
+                            <i class="fa-solid fa-laptop"></i> أصول وأجهزة الفروع
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('movement')">
+                            <i class="fa-solid fa-arrow-right-arrow-left text-warning"></i> تنقل الأجهزة بين المستخدمين
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('reports')">
+                            <i class="fa-solid fa-chart-line text-info"></i> التقارير وسجل التحليلات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('users')">
+                            <i class="fa-solid fa-users-gear text-primary"></i> المستخدمين والصلاحيات
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('tickets')">
+                            <i class="fa-solid fa-headset text-danger"></i> تذاكر وبلاغات الدعم
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('network')">
+                            <i class="fa-solid fa-network-wired text-info"></i> راكات وشبكات الفروع
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('custody')">
+                            <i class="fa-solid fa-file-signature text-warning"></i> طباعة محاضر العُهد
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('lifecycle_hub')">
+                            <i class="fa-solid fa-clock-rotate-left text-success"></i> دورة حياة الأجهزة
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('licenses')">
+                            <i class="fa-solid fa-key text-success"></i> التراخيص والبرمجيات
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="p-3 border-top border-secondary mt-auto">
+                <button class="btn btn-warning text-dark fw-bold w-100 mb-2 py-2 shadow-sm" onclick="openAddTicketModal()">
+                    <i class="fa-solid fa-headset me-2"></i> الدعم الفني والشكاوى
+                </button>
+                <button class="btn btn-outline-info text-white w-100 py-2 mb-2" onclick="toggleLanguage()">
+                    <i class="fa-solid fa-globe me-2"></i> <span id="sidebarLangBtn">English (EN)</span>
+                </button>
+                <div class="text-center">
+                    <span class="badge bg-primary d-block py-1 mb-1">5 فروع معتمدة</span>
+                    <small class="text-muted">الخرج • القادسية • الإدارة • ورشة ثقة • جدة</small>
+                </div>
+            </div>
+        </nav>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+            
+            <!-- 1. شاشة لوحة المؤشرات (AssetPrime / AssetIT Style) -->
+            <div id="tab-dashboard" class="tab-section active">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div>
+                        <h2 class="fw-bold mb-1">Dashboard | لوحة المؤشرات المتقدمة</h2>
+                        <p class="text-secondary mb-0">نظرة شاملة ومحدثة على توزيع الأجهزة، الضمانات، تنقلات العهد، وتذاكر الصيانة.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary fw-bold" onclick="openAddAssetModal()">
+                            <i class="fa-solid fa-plus me-1"></i> إضافة أصل جديد (Add Asset)
+                        </button>
+                        <button class="btn btn-outline-warning text-white fw-bold" onclick="openTransferModal()">
+                            <i class="fa-solid fa-arrow-right-arrow-left me-1"></i> نقل جهاز لموظف آخر (New Movement)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 1.1 كروت الفئات الأربعة الملونة (AssetIT - الصورة 2) -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="assetit-card bg-card-teal" onclick="filterAssetsCategory('Laptop')">
+                            <div>
+                                <h2 id="top-card-assets">128</h2>
+                                <p>أجهزة اللابتوب والكمبيوتر</p>
+                            </div>
+                            <i class="fa-solid fa-laptop"></i>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="assetit-card bg-card-crimson" onclick="filterAssetsCategory('Accessories')">
+                            <div>
+                                <h2 id="top-card-accessories">46</h2>
+                                <p>الملحقات والإكسسوارات</p>
+                            </div>
+                            <i class="fa-solid fa-keyboard"></i>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="assetit-card bg-card-blue" onclick="filterAssetsCategory('Components')">
+                            <div>
+                                <h2 id="top-card-components">32</h2>
+                                <p>قطع الغيار والخوادم</p>
+                            </div>
+                            <i class="fa-solid fa-puzzle-piece"></i>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="assetit-card bg-card-purple" onclick="filterAssetsCategory('Consumables')">
+                            <div>
+                                <h2 id="top-card-consumables">19</h2>
+                                <p>الراكات والشبكات (Consumables)</p>
+                            </div>
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1.2 كروت المؤشرات الستة مع المنحنيات (AssetPrime - الصورة 1) -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="sparkline-card" onclick="switchTab('assets')">
+                            <small class="text-secondary d-block">إجمالي الأصول (Total)</small>
+                            <div class="num" id="stat-total-assets">128</div>
+                            <span class="trend-up"><i class="fa-solid fa-arrow-trend-up me-1"></i> +12 هذا الشهر</span>
+                            <svg class="sparkline-svg" viewBox="0 0 100 30"><path d="M0,25 Q25,5 50,20 T100,5" stroke="#38bdf8"/></svg>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="sparkline-card" onclick="switchTab('assets')">
+                            <small class="text-secondary d-block">أصول نشطة (Active)</small>
+                            <div class="num text-success" id="stat-active-assets">112</div>
+                            <span class="trend-up"><i class="fa-solid fa-arrow-trend-up me-1"></i> +8 في الفروع</span>
+                            <svg class="sparkline-svg" viewBox="0 0 100 30"><path d="M0,22 Q25,28 50,12 T100,6" stroke="#10b981"/></svg>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="sparkline-card" onclick="switchTab('movement')">
+                            <small class="text-secondary d-block">صيانة مفتوحة (Workload)</small>
+                            <div class="num text-warning" id="stat-open-maint">4</div>
+                            <span class="text-warning small"><i class="fa-solid fa-wrench me-1"></i> قيد المتابعة</span>
+                            <svg class="sparkline-svg" viewBox="0 0 100 30"><path d="M0,15 Q30,5 60,25 T100,10" stroke="#f59e0b"/></svg>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="sparkline-card" onclick="switchTab('reports')">
+                            <small class="text-secondary d-block">انتهاء الضمان (Coverage)</small>
+                            <div class="num text-danger" id="stat-exp-cov">7</div>
+                            <span class="trend-down"><i class="fa-solid fa-arrow-trend-down me-1"></i> خلال 30 يوماً</span>
+                            <svg class="sparkline-svg" viewBox="0 0 100 30"><path d="M0,10 Q25,25 50,8 T100,24" stroke="#ef4444"/></svg>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="sparkline-card" onclick="switchTab('movement')">
+                            <small class="text-secondary d-block">حركات النقل (Movements)</small>
+                            <div class="num text-info" id="stat-move-today">14</div>
+                            <span class="trend-up"><i class="fa-solid fa-check me-1"></i> موثقة بالسجل</span>
+                            <svg class="sparkline-svg" viewBox="0 0 100 30"><path d="M0,20 Q30,10 70,22 T100,8" stroke="#00b4d8"/></svg>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-xl-2">
+                        <div class="sparkline-card" onclick="switchTab('tickets')">
+                            <small class="text-secondary d-block">تذاكر الدعم (Tickets)</small>
+                            <div class="num text-purple" id="stat-tickets-count" style="color: #c084fc;">2</div>
+                            <span class="text-secondary small"><i class="fa-solid fa-headset me-1"></i> نشطة حالياً</span>
+                            <svg class="sparkline-svg" viewBox="0 0 100 30"><path d="M0,18 Q40,25 70,10 T100,12" stroke="#a855f7"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1.3 مركز تنبيهات العمليات والضمانات (AssetPrime) -->
+                <div class="card card-custom p-4 mb-4">
+                    <h5 class="fw-bold mb-3 text-white"><i class="fa-solid fa-bell text-warning me-2"></i> مركز تنبيهات العمليات والضمانات (Operations Attention Center)</h5>
+                    <div class="row g-3">
+                        <div class="col-md">
+                            <div class="attention-card b-red" onclick="switchTab('tickets')">
+                                <div class="attention-icon bg-danger bg-opacity-25 text-danger"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                <div><h4 class="fw-bold text-white mb-0">3</h4><small class="text-secondary d-block">صيانة متأخرة</small></div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="attention-card b-orange" onclick="switchTab('licenses')">
+                                <div class="attention-icon bg-warning bg-opacity-25 text-warning"><i class="fa-regular fa-calendar-xmark"></i></div>
+                                <div><h4 class="fw-bold text-white mb-0">5</h4><small class="text-secondary d-block">عقود صيانة AMC</small></div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="attention-card b-purple" onclick="switchTab('reports')">
+                                <div class="attention-icon bg-info bg-opacity-25 text-info"><i class="fa-solid fa-shield-halved"></i></div>
+                                <div><h4 class="fw-bold text-white mb-0">2</h4><small class="text-secondary d-block">تأمين الأجهزة</small></div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="attention-card b-blue" onclick="switchTab('reports')">
+                                <div class="attention-icon bg-primary bg-opacity-25 text-primary"><i class="fa-solid fa-award"></i></div>
+                                <div><h4 class="fw-bold text-white mb-0">7</h4><small class="text-secondary d-block">اقتراب انتهاء الضمان</small></div>
+                            </div>
+                        </div>
+                        <div class="col-md">
+                            <div class="attention-card b-yellow" onclick="switchTab('assets')">
+                                <div class="attention-icon bg-warning bg-opacity-25 text-warning"><i class="fa-solid fa-circle-exclamation"></i></div>
+                                <div><h4 class="fw-bold text-white mb-0">6</h4><small class="text-secondary d-block">أصول تتطلب فحصاً</small></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1.4 الرسوم البيانية المتطورة -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-7">
+                        <div class="card card-custom p-4">
+                            <h5 class="fw-bold mb-3 text-info"><i class="fa-solid fa-chart-bar me-2"></i> توزيع الأصول حسب الموديل (Assets by Asset Models)</h5>
+                            <div style="height: 270px;">
+                                <canvas id="modelBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card card-custom p-4">
+                            <h5 class="fw-bold mb-3 text-primary"><i class="fa-solid fa-chart-pie me-2"></i> النسب المئوية للموديلات والفروع</h5>
+                            <div style="height: 270px;">
+                                <canvas id="modelPieChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. شاشة أصول وأجهزة الفروع -->
+            <div id="tab-assets" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div>
+                        <div class="d-flex align-items-center mb-2"><button class="btn btn-outline-secondary btn-sm text-white me-2 mb-2" onclick="goBackTab()" title="رجوع للصفحة السابقة"><i class="fa-solid fa-arrow-right me-1"></i> رجوع</button><div><h2 class="fw-bold mb-1"><i class="fa-solid fa-laptop text-primary me-2"></i> إدارة أصول وأجهزة الفروع</h2></div></div>
+                        <p class="text-secondary mb-0">جرد وتتبع وتوليد وطباعة باركود لكل جهاز وطباعة نماذج العهد الرسمية.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary fw-bold" onclick="openAddAssetModal()"><i class="fa-solid fa-plus me-1"></i> إضافة أصل</button>
+                        <button class="btn btn-warning text-dark fw-bold" onclick="openTransferModal()"><i class="fa-solid fa-arrow-right-arrow-left me-1"></i> نقل عهدة جهاز</button>
+                        <button class="btn btn-outline-warning text-dark fw-bold bg-white" onclick="exportAssetsCSV()"><i class="fa-solid fa-file-csv me-1"></i> تصدير CSV</button>
+                    </div>
+                </div>
+
+                <div class="card card-custom p-3 mb-4">
+                    <div class="row g-2">
+                        <div class="col-md-5">
+                            <input type="text" id="assetSearchInput" onkeyup="renderAssetsTable()" class="form-control" placeholder="ابحث بكود الأصل، السريال، الموديل، أو اسم الموظف...">
+                        </div>
+                        <div class="col-md-4">
+                            <select id="assetBranchFilter" onchange="renderAssetsTable()" class="form-select">
+                                <option value="">🏢 جميع الفروع الخمسة</option>
+                                <option value="الإدارة">فرع الإدارة</option>
+                                <option value="الخرج">فرع الخرج</option>
+                                <option value="القادسية">فرع القادسية</option>
+                                <option value="ورشة ثقة">ورشة ثقة</option>
+                                <option value="جدة">فرع جدة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="assetStatusFilter" onchange="renderAssetsTable()" class="form-select">
+                                <option value="">كل الحالات</option>
+                                <option value="In Use">قيد العمل (In Use)</option>
+                                <option value="In Stock">بالمخزن (In Stock)</option>
+                                <option value="In Maintenance">تحت الصيانة</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-custom p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th>الصورة</th>
+                                    <th>كود الأصل</th>
+                                    <th>الفرع</th>
+                                    <th>الموديل</th>
+                                    <th>السيريال S/N</th>
+                                    <th>الحالة</th>
+                                    <th>المستلم الحالي</th>
+                                    <th>نقل العهدة</th>
+                                    <th>ملصق QR Code</th>
+                                    <th>محضر العهدة</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assetsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. شاشة تنقل الأجهزة بين المستخدمين (Asset Movement / Handover Hub) -->
+            <div id="tab-movement" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div>
+                        <div class="d-flex align-items-center mb-2"><button class="btn btn-outline-secondary btn-sm text-white me-2 mb-2" onclick="goBackTab()" title="رجوع للصفحة السابقة"><i class="fa-solid fa-arrow-right me-1"></i> رجوع</button><div><h2 class="fw-bold mb-1"><i class="fa-solid fa-arrow-right-arrow-left text-warning me-2"></i> سجل تنقل الأجهزة بين المستخدمين والفروع</h2></div></div>
+                        <p class="text-secondary mb-0">نقل عهدة أي جهاز من موظف إلى موظف آخر وتوثيق التاريخ وسبب النقل وإشعار الموظف فوراً.</p>
+                    </div>
+                    <button class="btn btn-warning text-dark fw-bold" onclick="openTransferModal()">
+                        <i class="fa-solid fa-plus me-1"></i> تسجيل حركة نقل جديدة
+                    </button>
+                </div>
+
+                <div class="card card-custom p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th>رقم الحركة</th>
+                                    <th>كود الأصل (Tag)</th>
+                                    <th>الموديل</th>
+                                    <th>من الموظف (السابق)</th>
+                                    <th>إلى الموظف (الجديد)</th>
+                                    <th>الفرع</th>
+                                    <th>التاريخ والوقت</th>
+                                    <th>سبب النقل</th>
+                                    <th>إشعار واتساب</th>
+                                    <th>محضر التسليم</th>
+                                </tr>
+                            </thead>
+                            <tbody id="movementTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. شاشة التقارير والتحليلات الرسمية A4 -->
+            <div id="tab-reports" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div>
+                        <div class="d-flex align-items-center mb-2"><button class="btn btn-outline-secondary btn-sm text-white me-2 mb-2" onclick="goBackTab()" title="رجوع للصفحة السابقة"><i class="fa-solid fa-arrow-right me-1"></i> رجوع</button><div><h2 class="fw-bold mb-1"><i class="fa-solid fa-chart-line text-info me-2"></i> منظومة التقارير الشاملة</h2></div></div>
+                        <p class="text-secondary mb-0">استخراج وطباعة تقارير جرد أصول الفروع المعتمدة بصيغة A4 Landscape مروّسة بشعار مرني.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-warning text-dark fw-bold shadow-sm" onclick="printOfficialInventoryReport()">
+                            <i class="fa-solid fa-print me-1"></i> طباعة تقرير الجرد الرسمي (A4)
+                        </button>
+                        <button class="btn btn-outline-success fw-bold bg-white" onclick="exportAssetsCSV()">
+                            <i class="fa-solid fa-file-excel me-1"></i> تصدير Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card card-custom p-3 mb-4">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label small text-secondary fw-bold">تصفية حسب الفرع:</label>
+                            <select id="reportBranchFilter" onchange="renderReportsTable()" class="form-select">
+                                <option value="">🏢 كافة الفروع الخمسة</option>
+                                <option value="الإدارة">فرع الإدارة</option>
+                                <option value="الخرج">فرع الخرج</option>
+                                <option value="القادسية">فرع القادسية</option>
+                                <option value="ورشة ثقة">ورشة ثقة</option>
+                                <option value="جدة">فرع جدة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-secondary fw-bold">حالة الأصل:</label>
+                            <select id="reportStatusFilter" onchange="renderReportsTable()" class="form-select">
+                                <option value="">كل الحالات</option>
+                                <option value="In Use">قيد العمل (In Use)</option>
+                                <option value="In Stock">بالمخزن (In Stock)</option>
+                                <option value="In Maintenance">تحت الصيانة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 text-md-end pt-3">
+                            <span class="badge bg-primary p-2 fs-6" id="reportCountBadge">عدد الأصول المشمولة: 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-custom p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>الصورة</th>
+                                    <th>كود الأصل</th>
+                                    <th>الفرع</th>
+                                    <th>الموديل والنوع</th>
+                                    <th>الرقم التسلسلي S/N</th>
+                                    <th>الحالة الفنية</th>
+                                    <th>المستلم</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. شاشة المستخدمين وإدارة الصلاحيات (RBAC) -->
+            <div id="tab-users" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div>
+                        <div class="d-flex align-items-center mb-2"><button class="btn btn-outline-secondary btn-sm text-white me-2 mb-2" onclick="goBackTab()" title="رجوع للصفحة السابقة"><i class="fa-solid fa-arrow-right me-1"></i> رجوع</button><div><h2 class="fw-bold mb-1"><i class="fa-solid fa-users-gear text-warning me-2"></i> إدارة المستخدمين ومصفوفة الصلاحيات</h2></div></div>
+                        <p class="text-secondary mb-0">إدارة حسابات المسؤولين والفنيين وموظفي الفروع وتعيين العهد والأرقام الوظيفية.</p>
+                    </div>
+                    <button class="btn btn-primary fw-bold" onclick="openAddUserModal()">
+                        <i class="fa-solid fa-user-plus me-1"></i> إضافة مستخدم جديد
+                    </button>
+                </div>
+
+                <div class="card card-custom p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>الاسم الكامل</th>
+                                    <th>رقم الجوال (واتساب)</th>
+                                    <th>الدور الوظيفي</th>
+                                    <th>الفرع التابع له</th>
+                                    <th>الأجهزة بعهدته</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. شاشة تذاكر وبلاغات الدعم الفني -->
+            <div id="tab-tickets" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <div class="d-flex align-items-center mb-2"><button class="btn btn-outline-secondary btn-sm text-white me-2 mb-2" onclick="goBackTab()" title="رجوع للصفحة السابقة"><i class="fa-solid fa-arrow-right me-1"></i> رجوع</button><div><h3 class="fw-bold mb-1"><i class="fa-solid fa-headset text-danger me-2"></i> تذاكر وبلاغات الدعم الفني</h3></div></div>
+                        <p class="text-secondary mb-0">متابعة بلاغات الأعطال مع دعم المراسلة الفورية عبر واتساب وتوثيق وقت الإغلاق.</p>
+                    </div>
+                    <button class="btn btn-warning text-dark fw-bold" onclick="openAddTicketModal()">
+                        <i class="fa-solid fa-plus me-1"></i> فتح تذكرة جديدة
+                    </button>
+                </div>
+                <div class="card card-custom p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th>رقم التذكرة</th>
+                                    <th>الفرع</th>
+                                    <th>موضوع العطل</th>
+                                    <th>مقدم البلاغ</th>
+                                    <th>الأولوية</th>
+                                    <th>الحالة</th>
+                                    <th>تاريخ ووقت الحل</th>
+                                    <th>واتساب</th>
+                                    <th>الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ticketsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. شاشة الشبكات والراكات -->
+            <div id="tab-network" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h3 class="fw-bold mb-1"><i class="fa-solid fa-network-wired text-info me-2"></i> بنية الشبكات والراكات</h3>
+                        <p class="text-secondary mb-0">متابعة السويتشات، الراوترات، الجدران النارية والراكات عبر الفروع الخمسة.</p>
+                    </div>
+                    <button class="btn btn-info text-dark fw-bold" onclick="openAddNetModal()">
+                        <i class="fa-solid fa-plus me-1"></i> إضافة جهاز شبكة
+                    </button>
+                </div>
+                <div class="card card-custom p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead><tr><th>الفرع</th><th>اسم الجهاز (Host)</th><th>النوع والموديل</th><th>Management IP</th><th>موقع الراك</th><th>الحالة</th><th>حذف</th></tr></thead>
+                            <tbody id="networkTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. شاشة محاضر العهد -->
+            <div id="tab-custody" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h3 class="fw-bold mb-1"><i class="fa-solid fa-file-signature text-warning me-2"></i> سجل ونماذج محاضر العُهد</h3>
+                        <p class="text-secondary mb-0">طباعة نماذج استلام وتسليم العهد الرسمية المعتمدة لحفظ مسؤولية الأجهزة.</p>
+                    </div>
+                </div>
+                <div class="card card-custom p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead><tr><th>نوع المحضر</th><th>الفرع</th><th>الصورة</th>
+                                    <th>كود الأصل</th><th>المستلم</th><th>التاريخ</th><th>طباعة النموذج</th></tr></thead>
+                            <tbody id="custodyLogTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. شاشة دورة حياة الأجهزة -->
+            <div id="tab-lifecycle_hub" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h3 class="fw-bold mb-1"><i class="fa-solid fa-clock-rotate-left text-success me-2"></i> السجل الزمني لدورة حياة الأجهزة</h3>
+                        <p class="text-secondary mb-0">التتبع التاريخي الكامل لكل جهاز من تاريخ الشراء والتسليم حتى الإهلاك.</p>
+                    </div>
+                </div>
+                <div id="lifecycleTimelineContainer" class="card card-custom p-4"></div>
+            </div>
+
+            <!-- 10. شاشة التراخيص -->
+            <div id="tab-licenses" class="tab-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h3 class="fw-bold mb-1"><i class="fa-solid fa-key text-success me-2"></i> تراخيص البرمجيات والأنظمة</h3>
+                        <p class="text-secondary mb-0">إدارة مفاتيح تفعيل الأنظمة وتراخيص Office و Antivirus.</p>
+                    </div>
+                    <button class="btn btn-success fw-bold" onclick="openAddLicenseModal()">
+                        <i class="fa-solid fa-plus me-1"></i> إضافة ترخيص
+                    </button>
+                </div>
+                <div class="card card-custom p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead><tr><th>البرنامج</th><th>الشركة (Vendor)</th><th>مفتاح الترخيص</th><th>المقاعد الكلية</th><th>المستخدم</th><th>المتبقي</th></tr></thead>
+                            <tbody id="licensesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- ======================= MODAL: TRANSFER ASSET (تنقل الأجهزة بين المستخدمين) ======================= -->
+<div class="modal fade" id="transferModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content card-custom">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold text-white"><i class="fa-solid fa-arrow-right-arrow-left text-warning me-2"></i> تسجيل حركة نقل جهاز / تعديل المستلم</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="transferForm" onsubmit="executeAssetTransfer(event)">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">اختر الجهاز المراد نقله *</label>
+                            <select id="transferAssetSelect" class="form-select border-primary" required onchange="onTransferAssetSelected()">
+                                <option value="">-- حدد كود الأصل --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">المستلم الحالي المسجل بالنظام</label>
+                            <input type="text" id="transferCurrentHolder" class="form-control" readonly style="background:#1e293b; color:#94a3b8;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">اسم المستلم الجديد (صاحب العهدة الجديد) *</label>
+                            <input type="text" id="transferNewHolder" class="form-control" required placeholder="اسم الموظف المستلم الجديد">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">رقم جوال المستلم الجديد (لإشعار الواتساب)</label>
+                            <input type="text" id="transferNewPhone" class="form-control" placeholder="9665XXXXXXXX">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">الفرع المنقول إليه الجهاز *</label>
+                            <select id="transferNewBranch" class="form-select" required>
+                                <option value="الإدارة">فرع الإدارة</option>
+                                <option value="الخرج">فرع الخرج</option>
+                                <option value="القادسية">فرع القادسية</option>
+                                <option value="ورشة ثقة">ورشة ثقة</option>
+                                <option value="جدة">فرع جدة</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">سبب النقل / نوع الحركة</label>
+                            <select id="transferReasonType" class="form-select">
+                                <option value="نقل عهدة عمل">نقل عهدة عمل لموظف آخر</option>
+                                <option value="إعادة توزيع داخلي">إعادة توزيع داخلي بين الفروع</option>
+                                <option value="استرجاع للمستودع">استرجاع للمستودع (بالمخزن)</option>
+                                <option value="تسليم بديل مؤقت">تسليم جهاز بديل مؤقت</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold">ملاحظات وتفاصيل إضافية</label>
+                            <textarea id="transferNotes" class="form-control" rows="2" placeholder="اكتب أي ملاحظات تتعلق بالحالة الفنية أو ملحقات الجهاز..."></textarea>
+                        </div>
+                    </div>
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-warning text-dark fw-bold px-4">
+                            <i class="fa-solid fa-check me-1"></i> تأكيد نقل الجهاز وإشعار الموظف
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================= MODAL: NOTIFY USER (إشعار الموظف بإضافة الأصل) ======================= -->
+<div class="modal fade" id="notifyModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card-custom text-center p-3">
+            <div class="p-2 mb-2">
+                <i class="fa-brands fa-whatsapp text-success fa-3x mb-2"></i>
+                <h5 class="fw-bold text-white mb-1">إشعار الموظف بإضافة الجهاز لعهدته</h5>
+                <p class="text-secondary small mb-3">تم تحديث بيانات الأصل بنجاح! يمكنك الآن إرسال تفاصيل العهدة فوراً إلى الموظف عبر واتساب بنقرة واحدة.</p>
+                <div class="bg-dark p-3 rounded text-start border border-secondary mb-3" style="font-size:13px; line-height:1.7;">
+                    <div class="text-info fw-bold mb-1">نص الرسالة الجاهزة:</div>
+                    <div id="notifyMessagePreview" class="text-light"></div>
+                </div>
+                <div class="d-flex justify-content-center gap-2">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    <a id="notifyWhatsAppBtn" href="#" target="_blank" class="btn btn-success fw-bold px-4">
+                        <i class="fa-brands fa-whatsapp me-2"></i> إرسال عبر واتساب الآن
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================= MODAL: BARCODE & QR STICKER ======================= -->
+<div class="modal fade" id="barcodePrintModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card-custom text-center p-3">
+            <h5 class="fw-bold mb-3 text-white"><i class="fa-solid fa-qrcode text-warning me-2"></i> ملصق رمز الاستجابة السريعة (QR Code فقط)</h5>
+            <div id="printableBarcodeContainer" class="bg-white text-dark p-3 rounded mx-auto border" style="width: 320px; text-align: center;">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                    <img src="data:image/png;base64,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" alt="Morni" style="height: 28px;">
+                    <span class="badge bg-dark" id="lblBranch">فرع الإدارة</span>
+                </div>
+                <!-- رمز الاستجابة السريعة (QR Code بدقة فائقة) -->
+                <div class="my-3 text-center">
+                    <div style="background:#ffffff; padding:10px; display:inline-block; border-radius:10px; border:1px solid #cbd5e1; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                        <div id="qrcodeCanvas" class="d-flex justify-content-center"></div>
+                    </div>
+                </div>
+                <div class="fw-bold font-monospace text-primary fs-5" id="lblTag">AST-1001</div>
+                <div class="fw-bold text-dark small" id="lblModel">Lenovo ThinkPad</div>
+                <div class="small text-muted font-monospace" id="lblSerial">S/N: PF38XK91</div>
+                <div class="small text-success fw-bold" id="lblUser">المستلم: أحمد محمود</div>
+                <div class="border-top pt-1 mt-2 text-muted" style="font-size: 10px;">إدارة تقنية المعلومات - صالح للاستخدام الرسمي</div>
+            </div>
+            <div class="mt-3 d-flex justify-content-center gap-2">
+                <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">إغلاق</button>
+                <button class="btn btn-warning btn-sm text-dark fw-bold px-3" onclick="printStickerModal()">
+                    <i class="fa-solid fa-print me-1"></i> طباعة الملصق
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ======================= MODAL: VIEW PHOTO ======================= -->
+<div class="modal fade" id="viewPhotoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card-custom text-center p-3">
+            <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2 mb-3">
+                <h5 class="fw-bold mb-0 text-white" id="viewPhotoTitle">صورة الأصل</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <img id="fullPhotoImg" src="" alt="صورة الأصل" class="img-fluid rounded border border-secondary shadow" style="max-height: 70vh; object-fit: contain;">
+        </div>
+    </div>
+</div>
+
+<!-- Modal: إضافة مستخدم RBAC -->
+<div class="modal fade" id="userModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content card-custom">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold" id="userModalTitle">إضافة مستخدم جديد</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">الاسم الكامل *</label>
+                    <input type="text" id="formUserName" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">رقم الجوال (واتساب) *</label>
+                    <input type="text" id="formUserPhone" class="form-control" placeholder="9665XXXXXXXX" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">الدور الوظيفي</label>
+                    <select id="formUserRole" class="form-select">
+                        <option value="موظف / مستلم عهدة">موظف / مستلم عهدة (Employee)</option>
+                        <option value="مدير عام النظام">مدير عام النظام (Super Admin)</option>
+                        <option value="فني دعم وصيانة">فني دعم وصيانة (IT Support)</option>
+                        <option value="مدير فرع">مدير فرع (Branch Manager)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">الفرع</label>
+                    <select id="formUserBranch" class="form-select">
+                        <option value="الإدارة">فرع الإدارة</option>
+                        <option value="الخرج">فرع الخرج</option>
+                        <option value="القادسية">فرع القادسية</option>
+                        <option value="ورشة ثقة">ورشة ثقة</option>
+                        <option value="جدة">فرع جدة</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary fw-bold" onclick="saveUserRecord()">حفظ المستخدم</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: إضافة تذكرة دعم فني -->
+<div class="modal fade" id="ticketModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content card-custom">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold">تقديم بلاغ عطل فني</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">اسم الموظف *</label>
+                    <input type="text" id="formTicketReq" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">رقم الجوال (للمتابعة عبر واتساب)</label>
+                    <input type="text" id="formTicketPhone" class="form-control" placeholder="9665XXXXXXXX">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">الفرع *</label>
+                    <select id="formTicketBranch" class="form-select">
+                        <option value="الإدارة">فرع الإدارة</option>
+                        <option value="الخرج">فرع الخرج</option>
+                        <option value="القادسية">فرع القادسية</option>
+                        <option value="ورشة ثقة">ورشة ثقة</option>
+                        <option value="جدة">فرع جدة</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">عنوان المشكلة *</label>
+                    <input type="text" id="formTicketTitle" class="form-control" required>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-warning text-dark fw-bold" onclick="saveEmployeeTicket()">إرسال البلاغ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: إضافة جهاز شبكة -->
+<div class="modal fade" id="networkModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content card-custom">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold">إضافة جهاز شبكة</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">الفرع *</label>
+                    <select id="formNetBranch" class="form-select">
+                        <option value="الإدارة">فرع الإدارة</option>
+                        <option value="الخرج">فرع الخرج</option>
+                        <option value="القادسية">فرع القادسية</option>
+                        <option value="ورشة ثقة">ورشة ثقة</option>
+                        <option value="جدة">فرع جدة</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">اسم الجهاز (Host) *</label>
+                    <input type="text" id="formNetHost" class="form-control" placeholder="SW-ADM-CORE" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">النوع والموديل *</label>
+                    <input type="text" id="formNetModel" class="form-control" placeholder="Cisco Catalyst 9300" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Management IP *</label>
+                    <input type="text" id="formNetIP" class="form-control" placeholder="10.10.1.1" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">موقع الراك</label>
+                    <input type="text" id="formNetRack" class="form-control" placeholder="Rack 01 - U40">
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-info text-dark fw-bold" onclick="saveNetworkDevice()">حفظ الجهاز</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: إضافة ترخيص -->
+<div class="modal fade" id="licenseModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content card-custom">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold">إضافة ترخيص برنامج</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3"><label class="form-label">اسم البرنامج *</label><input type="text" id="formLicName" class="form-control" required></div>
+                <div class="mb-3"><label class="form-label">الشركة (Vendor)</label><input type="text" id="formLicVendor" class="form-control"></div>
+                <div class="mb-3"><label class="form-label">مفتاح الترخيص</label><input type="text" id="formLicKey" class="form-control"></div>
+                <div class="row g-2">
+                    <div class="col"><label class="form-label">المقاعد الكلية</label><input type="number" id="formLicTotal" class="form-control" value="20"></div>
+                    <div class="col"><label class="form-label">المستخدم</label><input type="number" id="formLicUsed" class="form-control" value="5"></div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-success fw-bold" onclick="saveLicenseRecord()">حفظ الترخيص</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: إضافة أصل -->
+<div class="modal fade" id="assetModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content card-custom">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold" id="assetModalTitle">إضافة أصل جديد وتعيين العهدة</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="assetEditId">
+                <input type="hidden" id="formAssetPhotoData">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">كود الأصل *</label>
+                        <input type="text" id="formAssetTag" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">الفرع *</label>
+                        <select id="formAssetBranch" class="form-select">
+                            <option value="الإدارة">فرع الإدارة</option>
+                            <option value="الخرج">فرع الخرج</option>
+                            <option value="القادسية">فرع القادسية</option>
+                            <option value="ورشة ثقة">ورشة ثقة</option>
+                            <option value="جدة">فرع جدة</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">الفئة *</label>
+                        <select id="formAssetCategory" class="form-select">
+                            <option value="Laptop">Laptop (لابتوب)</option>
+                            <option value="Desktop">Desktop (كمبيوتر مكتبي)</option>
+                            <option value="Server">Server (خادم)</option>
+                            <option value="Accessories">Accessories (ملحقات)</option>
+                            <option value="Components">Components (قطع غيار)</option>
+                            <option value="Consumables">Consumables / Network (شبكات)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">الموديل *</label>
+                        <input type="text" id="formAssetModel" class="form-control" required placeholder="مثال: Lenovo ThinkPad T14">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">الرقم التسلسلي S/N</label>
+                        <input type="text" id="formAssetSerial" class="form-control" placeholder="PF38XK91">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">اسم الموظف المستلم (العهدة)</label>
+                        <input type="text" id="formAssetAssigned" class="form-control" placeholder="اتركه فارغاً إن كان بالمخزن">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">رقم جوال الموظف (لإرسال إشعار فوري)</label>
+                        <input type="text" id="formAssetPhone" class="form-control" placeholder="9665XXXXXXXX">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">الحالة</label>
+                        <select id="formAssetStatus" class="form-select">
+                            <option value="In Use">قيد العمل (In Use)</option>
+                            <option value="In Stock">بالمخزن (In Stock)</option>
+                            <option value="In Maintenance">تحت الصيانة</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">الملحقات المسلمة</label>
+                        <input type="text" id="formAssetAcc" class="form-control" placeholder="شاحن + حقيبة + ماوس">
+                    </div>
+                </div>
+            </div>
+            
+                    <!-- ميزة التقاط صورة الأصل بكاميرا الجوال -->
+                    <div class="col-12 border-top border-secondary pt-3 mt-3">
+                        <label class="form-label fw-bold d-flex justify-content-between align-items-center">
+                            <span><i class="fa-solid fa-camera text-primary me-2"></i> التقاط وتوثيق صورة الأصل بكاميرا الجوال</span>
+                            <small class="text-secondary">لحفظ وتوثيق الحالة البدنية للجهاز</small>
+                        </label>
+                        <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                            <label class="btn btn-outline-primary btn-sm fw-bold">
+                                <i class="fa-solid fa-camera me-1"></i> فتح الكاميرا والتقاط صورة
+                                <input type="file" id="formAssetCameraInput" accept="image/*" capture="environment" style="display: none;" onchange="handleAssetPhotoCapture(event)">
+                            </label>
+                            <label class="btn btn-outline-light btn-sm">
+                                <i class="fa-solid fa-image me-1"></i> اختيار صورة من المعرض
+                                <input type="file" id="formAssetGalleryInput" accept="image/*" style="display: none;" onchange="handleAssetPhotoCapture(event)">
+                            </label>
+                            <button type="button" class="btn btn-outline-danger btn-sm" id="btnRemovePhoto" style="display: none;" onclick="removeAssetPhoto()">
+                                <i class="fa-solid fa-trash me-1"></i> حذف الصورة
+                            </button>
+                        </div>
+                        <div id="photoPreviewContainer" class="p-2 border border-secondary rounded bg-dark text-center" style="display: none;">
+                            <img id="assetPhotoPreview" src="" alt="صورة الأصل" style="max-height: 180px; max-width: 100%; border-radius: 8px; object-fit: contain;">
+                            <div class="small text-success mt-1"><i class="fa-solid fa-circle-check me-1"></i> تم التقاط الصورة وتجهيزها للحفظ مع بيانات الأصل</div>
+                        </div>
+                    </div>
+
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-primary fw-bold" onclick="saveAsset()">حفظ الأصل وإشعار الموظف</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const STORAGE_KEYS = {
+    ASSETS: 'it_branches_assets_v6',
+    USERS: 'it_branches_users_v6',
+    TICKETS: 'it_branches_tickets_v6',
+    MOVEMENTS: 'it_branches_movements_v6',
+    NETWORK: 'it_branches_network_v6',
+    LICENSES: 'it_branches_licenses_v6'
+};
+
+const MORNI_LOGO_SRC = "data:image/png;base64,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";
+
+function formatWhatsAppPhone(rawPhone) {
+    if (!rawPhone) return '';
+    let p = rawPhone.toString().replace(/[^0-9]/g, '');
+    if (p.startsWith('00')) p = p.substring(2);
+    if (p.startsWith('05')) p = '966' + p.substring(1);
+    if (p.startsWith('5') && p.length === 9) p = '966' + p;
+    return p;
+}
+
+function initData() {
+    if (!localStorage.getItem(STORAGE_KEYS.ASSETS)) {
+        const defaultAssets = [
+            { id: 1, tag: 'AST-ADM-01', branch: 'الإدارة', category: 'Laptop', model: 'Lenovo ThinkPad T14', serial: 'PF38XK91', status: 'In Use', assigned: 'م. أحمد محمود', phone: '966501112233', acc: 'شاحن أصلي + حقيبة + ماوس' },
+            { id: 2, tag: 'AST-KHJ-01', branch: 'الخرج', category: 'Desktop', model: 'Dell OptiPlex 7000', serial: '5CD2410MKL', status: 'In Use', assigned: 'خالد السبيعي', phone: '966502223344', acc: 'شاشة 24 + كيبورد وماوس' },
+            { id: 3, tag: 'AST-QAD-01', branch: 'القادسية', category: 'Laptop', model: 'HP EliteBook 840', serial: 'R90X81AA', status: 'In Use', assigned: 'سلطان القحطاني', phone: '966503334455', acc: 'شاحن + حقيبة' },
+            { id: 4, tag: 'AST-THQ-01', branch: 'ورشة ثقة', category: 'Desktop', model: 'HP ProDesk 400', serial: 'LNV-89214', status: 'In Use', assigned: 'فهد الدوسري', phone: '966504445566', acc: 'طابعة باركود + شاشة' },
+            { id: 5, tag: 'AST-JED-01', branch: 'جدة', category: 'Laptop', model: 'Dell Latitude 5530', serial: 'DL-772189', status: 'In Stock', assigned: '', phone: '', acc: 'شاحن فقط' },
+            { id: 6, tag: 'AST-ADM-02', branch: 'الإدارة', category: 'Server', model: 'Dell PowerEdge R750', serial: 'SRV-88210', status: 'In Use', assigned: 'فريق الـ IT', phone: '', acc: 'سيرفر رئيسي' }
+        ];
+        localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(defaultAssets));
+    }
+
+    if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
+        const defaultUsers = [
+            { id: 1, name: 'م. أحمد محمود', phone: '966501112233', role: 'مهندس أنظمة', branch: 'الإدارة' },
+            { id: 2, name: 'خالد السبيعي', phone: '966502223344', role: 'مدير فرع الخرج', branch: 'الخرج' },
+            { id: 3, name: 'سلطان القحطاني', phone: '966503334455', role: 'محاسب فرع', branch: 'القادسية' },
+            { id: 4, name: 'فهد الدوسري', phone: '966504445566', role: 'فني دعم وتقنية', branch: 'ورشة ثقة' },
+            { id: 5, name: 'عمر الغامدي', phone: '966505556677', role: 'مسؤول مبيعات', branch: 'جدة' }
+        ];
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(defaultUsers));
+    }
+
+    if (!localStorage.getItem(STORAGE_KEYS.MOVEMENTS)) {
+        const defaultMov = [
+            { id: 1, tag: 'AST-ADM-01', model: 'Lenovo ThinkPad T14', fromUser: 'مستودع الإدارة', toUser: 'م. أحمد محمود', phone: '966501112233', branch: 'الإدارة', date: '2026-10-25 10:30 AM', reason: 'تسليم عهدة موظف جديد' },
+            { id: 2, tag: 'AST-KHJ-01', model: 'Dell OptiPlex 7000', fromUser: 'مستودع الإدارة', toUser: 'خالد السبيعي', phone: '966502223344', branch: 'الخرج', date: '2026-10-26 01:15 PM', reason: 'نقل جهاز لإدارة فرع الخرج' }
+        ];
+        localStorage.setItem(STORAGE_KEYS.MOVEMENTS, JSON.stringify(defaultMov));
+    }
+
+    if (!localStorage.getItem(STORAGE_KEYS.TICKETS)) {
+        const defaultTickets = [
+            { id: 1, number: 'TCK-KHJ-101', branch: 'الخرج', title: 'عطل طابعة استيكرات الباركود', requester: 'خالد السبيعي', phone: '966502223344', priority: 'عالية', status: 'In Progress', resolvedAt: '-' },
+            { id: 2, number: 'TCK-ADM-102', branch: 'الإدارة', title: 'تحديث برامج الحماية للأجهزة', requester: 'أحمد محمود', phone: '966501112233', priority: 'متوسطة', status: 'Resolved', resolvedAt: '2026-10-28 02:15 PM' }
+        ];
+        localStorage.setItem(STORAGE_KEYS.TICKETS, JSON.stringify(defaultTickets));
+    }
+
+    if (!localStorage.getItem(STORAGE_KEYS.NETWORK)) {
+        const defaultNet = [
+            { id: 1, branch: 'الإدارة', host: 'SW-ADM-CORE-01', model: 'Cisco Catalyst 9300', ip: '10.10.1.2', rack: 'Rack 01 - U40', status: 'Online' },
+            { id: 2, branch: 'الخرج', host: 'RT-KHARJ-EDGE', model: 'Cisco ISR 4331', ip: '10.20.1.1', rack: 'Wall Rack - U04', status: 'Online' },
+            { id: 3, branch: 'ورشة ثقة', host: 'FW-THIQAH-01', model: 'FortiGate 40F', ip: '10.40.1.254', rack: 'Rack Thiqah - U02', status: 'Online' }
+        ];
+        localStorage.setItem(STORAGE_KEYS.NETWORK, JSON.stringify(defaultNet));
+    }
+
+    if (!localStorage.getItem(STORAGE_KEYS.LICENSES)) {
+        const defaultLic = [
+            { id: 1, name: 'Microsoft 365 Business Standard', vendor: 'Microsoft', key: 'MS-365-CORP-MORNI', total: 60, used: 45 },
+            { id: 2, name: 'Kaspersky Endpoint Security', vendor: 'Kaspersky', key: 'KASP-SEC-2026', total: 70, used: 52 }
+        ];
+        localStorage.setItem(STORAGE_KEYS.LICENSES, JSON.stringify(defaultLic));
+    }
+}
+
+function getAssets() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.ASSETS) || '[]'); }
+function getUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '[]'); }
+function getMovements() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.MOVEMENTS) || '[]'); }
+function getTickets() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.TICKETS) || '[]'); }
+function getNetwork() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.NETWORK) || '[]'); }
+function getLicenses() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.LICENSES) || '[]'); }
+
+// دالة التبديل بين التبويبات مع تشغيل كافة المحتويات وحل مشكلة عدم ظهور البيانات
+let navigationHistory = ['dashboard'];
+
+function goBackTab() {
+    if (navigationHistory.length > 0) {
+        const prevTab = navigationHistory.pop();
+        switchTab(prevTab, true);
+    } else {
+        switchTab('dashboard', true);
+    }
+}
+
+function switchTab(tabId, isBackAction = false) {
+    const currentActive = document.querySelector('.tab-section.active');
+    const currentId = currentActive ? currentActive.id.replace('tab-', '') : 'dashboard';
+
+    if (!isBackAction && currentId !== tabId) {
+        navigationHistory.push(currentId);
+    }
+
+    document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#sidebarMenu .nav-link').forEach(el => el.classList.remove('active'));
+
+    const targetSection = document.getElementById('tab-' + tabId);
+    if (targetSection) targetSection.classList.add('active');
+
+    // تفعيل الرابط في القائمة
+    const links = document.querySelectorAll('#sidebarMenu .nav-link');
+    links.forEach(l => {
+        if (l.getAttribute('onclick') && l.getAttribute('onclick').includes(tabId)) {
+            l.classList.add('active');
+        }
+    });
+
+    // تشغيل وإظهار المحتوى التابع للتبويب
+    if (tabId === 'dashboard') updateDashboard();
+    if (tabId === 'assets') renderAssetsTable();
+    if (tabId === 'movement') renderMovementTable();
+    if (tabId === 'reports') renderReportsTable();
+    if (tabId === 'users') renderUsersTable();
+    if (tabId === 'tickets') renderTicketsTable();
+    if (tabId === 'network') renderNetworkTable();
+    if (tabId === 'custody') renderCustodyTable();
+    if (tabId === 'lifecycle_hub') renderLifecycleHub();
+    if (tabId === 'licenses') renderLicensesTable();
+
+    // إغلاق قائمة الموبايل عند التنقل
+    const sidebar = document.querySelector('.sidebar');
+    const backdrop = document.getElementById('mobileSidebarBackdrop');
+    if (sidebar) sidebar.classList.remove('mobile-open');
+    if (backdrop) backdrop.classList.remove('active');
+}
+
+// ----------------- RENDER TABLES -----------------
+function renderAssetsTable() {
+    const list = getAssets();
+    const q = document.getElementById('assetSearchInput')?.value.toLowerCase().trim() || '';
+    const branch = document.getElementById('assetBranchFilter')?.value || '';
+    const stat = document.getElementById('assetStatusFilter')?.value || '';
+    const tbody = document.getElementById('assetsTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const filtered = list.filter(a => {
+        const mQ = !q || a.tag.toLowerCase().includes(q) || (a.model && a.model.toLowerCase().includes(q)) || (a.serial && a.serial.toLowerCase().includes(q)) || (a.assigned && a.assigned.toLowerCase().includes(q));
+        const mB = !branch || a.branch === branch;
+        const mS = !stat || a.status === stat;
+        return mQ && mB && mS;
+    });
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4 text-secondary">لا توجد أجهزة مطابقة لمعايير البحث.</td></tr>';
+        return;
+    }
+
+    filtered.forEach(a => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${a.photo ? `<img src="${a.photo}" alt="صورة الأصل" style="width: 38px; height: 38px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid #38bdf8;" onclick="viewPhoto('${a.photo}', '${a.tag} - ${a.model}')" title="اضغط للتكبير">` : '<span class="badge bg-dark text-muted"><i class="fa-solid fa-camera"></i></span>'}</td>
+                <td class="fw-bold text-info">${a.tag}</td>
+                <td><span class="badge badge-branch">${a.branch}</span></td>
+                <td><strong>${a.model}</strong><br><small class="text-secondary">${a.category}</small></td>
+                <td class="font-monospace">${a.serial || '-'}</td>
+                <td><span class="badge ${a.status === 'In Use' ? 'badge-inuse' : (a.status === 'In Stock' ? 'badge-stock' : 'badge-maint')}">${a.status}</span></td>
+                <td>${a.assigned ? `<i class="fa-solid fa-user me-1 text-info"></i> ${a.assigned}` : '<span class="text-muted">بالمخزن</span>'}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-warning" title="نقل عهدة هذا الجهاز" onclick="openTransferModalFor('${a.tag}')">
+                        <i class="fa-solid fa-arrow-right-arrow-left me-1"></i> نقل العهدة
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-outline-light" onclick="showBarcodeModal(${a.id})">
+                        <i class="fa-solid fa-qrcode text-warning me-1"></i> ملصق QR Code
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-outline-warning" onclick="printCustodyHandoverSheet(${a.id})">
+                        <i class="fa-solid fa-file-contract me-1"></i> محضر
+                    </button>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editAsset(${a.id})"><i class="fa-solid fa-edit"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteAsset(${a.id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderMovementTable() {
+    const list = getMovements();
+    const tbody = document.getElementById('movementTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="text-center py-4 text-secondary">لا توجد حركات نقل مسجلة حتى الآن.</td></tr>';
+        return;
+    }
+
+    list.forEach((m, idx) => {
+        const waMsg = `مرحباً ${m.toUser}، تم استلام ونقل عهدة الجهاز (${m.tag} - ${m.model}) بفرع ${m.branch} بنجاح.`;
+        const pF = formatWhatsAppPhone(m.phone); const waUrl = pF ? `https://wa.me/${pF}?text=${encodeURIComponent(waMsg)}` : '#';
+        tbody.innerHTML += `
+            <tr>
+                <td class="fw-bold font-monospace text-warning">MOV-${1000 + m.id}</td>
+                <td class="fw-bold text-info">${m.tag}</td>
+                <td>${m.model}</td>
+                <td class="text-secondary"><i class="fa-solid fa-user-minus me-1"></i> ${m.fromUser || 'المستودع'}</td>
+                <td class="text-success fw-bold"><i class="fa-solid fa-user-check me-1"></i> ${m.toUser}</td>
+                <td><span class="badge badge-branch">${m.branch}</span></td>
+                <td class="small font-monospace">${m.date}</td>
+                <td><span class="badge bg-secondary">${m.reason}</span></td>
+                <td>
+                    ${m.phone ? `<a href="${waUrl}" target="_blank" class="btn btn-sm btn-success fw-bold"><i class="fa-brands fa-whatsapp me-1"></i> إشعار</a>` : '<span class="text-muted">-</span>'}
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-outline-warning" onclick="printTransferReceipt('${m.tag}', '${m.toUser}', '${m.branch}', '${m.date}')">
+                        <i class="fa-solid fa-print me-1"></i> إيصال النقل
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderReportsTable() {
+    const list = getAssets();
+    const branch = document.getElementById('reportBranchFilter')?.value || '';
+    const status = document.getElementById('reportStatusFilter')?.value || '';
+    const tbody = document.getElementById('reportsTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const filtered = list.filter(a => (!branch || a.branch === branch) && (!status || a.status === status));
+    if (document.getElementById('reportCountBadge')) {
+        document.getElementById('reportCountBadge').innerText = `عدد الأصول المشمولة: ${filtered.length} أصل`;
+    }
+
+    filtered.forEach((a, idx) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${idx + 1}</td>
+                <td class="fw-bold text-info">${a.tag}</td>
+                <td>${a.branch}</td>
+                <td>${a.model}</td>
+                <td class="font-monospace">${a.serial || '-'}</td>
+                <td><span class="badge ${a.status === 'In Use' ? 'bg-primary' : 'bg-success'}">${a.status}</span></td>
+                <td>${a.assigned || 'بالمخزن'}</td>
+            </tr>
+        `;
+    });
+}
+
+function renderUsersTable() {
+    const list = getUsers();
+    const tbody = document.getElementById('usersTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    const assets = getAssets();
+
+    list.forEach((u, i) => {
+        const userAssets = assets.filter(a => a.assigned && a.assigned.includes(u.name));
+        const assetsCount = userAssets.length;
+        tbody.innerHTML += `
+            <tr>
+                <td>${i + 1}</td>
+                <td class="fw-bold text-white">${u.name}</td>
+                <td class="font-monospace text-info">${u.phone || '-'}</td>
+                <td><span class="badge bg-primary">${u.role}</span></td>
+                <td><span class="badge badge-branch">${u.branch}</span></td>
+                <td><span class="badge bg-warning text-dark fw-bold">${assetsCount} جهاز بعهدته</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${u.id})"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderTicketsTable() {
+    const list = getTickets();
+    const tbody = document.getElementById('ticketsTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    list.forEach(t => {
+        const tF = formatWhatsAppPhone(t.phone); const waLink = tF ? `https://wa.me/${tF}?text=مرحباً%20${encodeURIComponent(t.requester)}%20بخصوص%20تذكرة%20الدعم%20${t.number}` : '#';
+        tbody.innerHTML += `
+            <tr>
+                <td class="fw-bold font-monospace text-warning">${t.number}</td>
+                <td><span class="badge badge-branch">${t.branch}</span></td>
+                <td>${t.title}</td>
+                <td>${t.requester}</td>
+                <td><span class="badge bg-secondary">${t.priority}</span></td>
+                <td><span class="badge ${t.status === 'Resolved' ? 'bg-success' : 'bg-warning text-dark'}">${t.status}</span></td>
+                <td class="font-monospace small text-info">${t.resolvedAt || '-'}</td>
+                <td>
+                    ${t.phone ? `<a href="${waLink}" target="_blank" class="btn btn-sm btn-success"><i class="fa-brands fa-whatsapp"></i></a>` : '-'}
+                </td>
+                <td>
+                    ${t.status !== 'Resolved' ? `<button class="btn btn-sm btn-outline-success" onclick="resolveTicket(${t.id})"><i class="fa-solid fa-check me-1"></i> إغلاق</button>` : '<span class="text-success small fw-bold">مكتملة</span>'}
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderNetworkTable() {
+    const list = getNetwork();
+    const tbody = document.getElementById('networkTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    list.forEach(n => {
+        tbody.innerHTML += `
+            <tr>
+                <td><span class="badge badge-branch">${n.branch}</span></td>
+                <td class="fw-bold text-info">${n.host}</td>
+                <td>${n.model}</td>
+                <td class="font-monospace text-primary fw-bold">${n.ip}</td>
+                <td><span class="badge bg-dark border border-secondary">${n.rack || 'Rack 01'}</span></td>
+                <td><span class="badge bg-success">${n.status}</span></td>
+                <td><button class="btn btn-sm btn-outline-danger" onclick="deleteNetwork(${n.id})"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>
+        `;
+    });
+}
+
+function renderCustodyTable() {
+    const list = getAssets().filter(a => a.assigned && a.assigned.trim() !== '');
+    const tbody = document.getElementById('custodyLogTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    list.forEach(a => {
+        tbody.innerHTML += `
+            <tr>
+                <td><span class="badge bg-primary">تسليم عهدة موثقة</span></td>
+                <td><span class="badge badge-branch">${a.branch}</span></td>
+                <td class="fw-bold text-info">${a.tag}</td>
+                <td class="fw-bold text-white">${a.assigned}</td>
+                <td>2026-10-28</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-warning" onclick="printCustodyHandoverSheet(${a.id})">
+                        <i class="fa-solid fa-print me-1"></i> طباعة النموذج
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+function renderLifecycleHub() {
+    const container = document.getElementById('lifecycleTimelineContainer');
+    if (!container) return;
+    const movements = getMovements();
+    let html = '<h5 class="fw-bold mb-3 text-white"><i class="fa-solid fa-clock-rotate-left me-2 text-warning"></i> سجل الحركات والعمليات التراكمية</h5>';
+    html += '<ul class="timeline">';
+    movements.forEach((m, idx) => {
+        html += `
+            <li class="timeline-item">
+                <div class="timeline-badge bg-primary"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+                <div class="timeline-panel">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-white">${m.tag} - ${m.model}</strong>
+                        <span class="badge bg-dark border border-secondary text-info">${m.date}</span>
+                    </div>
+                    <p class="mb-1 text-light small">تم نقل العهدة من: <strong>${m.fromUser}</strong> إلى: <strong class="text-success">${m.toUser}</strong> (${m.branch})</p>
+                    <small class="text-secondary">السبب: ${m.reason}</small>
+                </div>
+            </li>
+        `;
+    });
+    html += '</ul>';
+    container.innerHTML = html;
+}
+
+function renderLicensesTable() {
+    const list = getLicenses();
+    const tbody = document.getElementById('licensesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    list.forEach(l => {
+        tbody.innerHTML += `
+            <tr>
+                <td class="fw-bold text-white">${l.name}</td>
+                <td>${l.vendor}</td>
+                <td class="font-monospace text-secondary">${l.key || 'LIC-KEY-2026'}</td>
+                <td class="fw-bold">${l.total}</td>
+                <td class="text-info">${l.used}</td>
+                <td class="fw-bold text-success">${l.total - l.used}</td>
+            </tr>
+        `;
+    });
+}
+
+// ----------------- ASSET TRANSFER (تنقل الأجهزة بين المستخدمين) -----------------
+function openTransferModal() {
+    openTransferModalFor('');
+}
+
+function openTransferModalFor(tag) {
+    const assets = getAssets();
+    const sel = document.getElementById('transferAssetSelect');
+    sel.innerHTML = '<option value="">-- حدد كود الأصل --</option>';
+    assets.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.tag;
+        opt.innerText = `${a.tag} - ${a.model} (${a.assigned || 'بالمخزن'}) - فرع ${a.branch}`;
+        if (tag && a.tag === tag) opt.selected = true;
+        sel.appendChild(opt);
+    });
+    onTransferAssetSelected();
+    new bootstrap.Modal(document.getElementById('transferModal')).show();
+}
+
+function onTransferAssetSelected() {
+    const tag = document.getElementById('transferAssetSelect').value;
+    const a = getAssets().find(x => x.tag === tag);
+    if (a) {
+        document.getElementById('transferCurrentHolder').value = a.assigned ? `${a.assigned} (فرع ${a.branch})` : 'بالمخزن (غير مسند)';
+        document.getElementById('transferNewBranch').value = a.branch || 'الإدارة';
+    } else {
+        document.getElementById('transferCurrentHolder').value = '';
+    }
+}
+
+function executeAssetTransfer(e) {
+    e.preventDefault();
+    const tag = document.getElementById('transferAssetSelect').value;
+    const newHolder = document.getElementById('transferNewHolder').value.trim();
+    const newPhone = document.getElementById('transferNewPhone').value.trim();
+    const newBranch = document.getElementById('transferNewBranch').value;
+    const reason = document.getElementById('transferReasonType').value;
+    const notes = document.getElementById('transferNotes').value.trim();
+
+    if (!tag || !newHolder) return;
+
+    let assets = getAssets();
+    const a = assets.find(x => x.tag === tag);
+    if (!a) return;
+
+    const oldHolder = a.assigned || 'المستودع';
+    
+    // تحديث بيانات الأصل
+    a.assigned = newHolder;
+    a.branch = newBranch;
+    a.phone = newPhone;
+    a.status = (newHolder.toLowerCase().includes('مخزن') || newHolder.toLowerCase().includes('مستودع')) ? 'In Stock' : 'In Use';
+    localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(assets));
+
+    // إضافة حركة تنقل إلى سجل Movements
+    const now = new Date();
+    const dateStr = now.toISOString().split('T')[0] + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    let movements = getMovements();
+    movements.unshift({
+        id: Date.now(),
+        tag: a.tag,
+        model: a.model,
+        fromUser: oldHolder,
+        toUser: newHolder,
+        phone: newPhone,
+        branch: newBranch,
+        date: dateStr,
+        reason: reason + (notes ? ` (${notes})` : '')
+    });
+    localStorage.setItem(STORAGE_KEYS.MOVEMENTS, JSON.stringify(movements));
+
+    bootstrap.Modal.getInstance(document.getElementById('transferModal')).hide();
+    
+    // تحديث الشاشات
+    renderAssetsTable();
+    renderMovementTable();
+    updateDashboard();
+
+    // إشعار الموظف فوراً
+    showHandoverNotification(newHolder, a.tag, a.model, a.serial, newBranch, newPhone, 'نقل عهدة');
+}
+
+// ----------------- HANDOVER NOTIFICATION (إشعار الموظف الجديد عبر واتساب) -----------------
+function showHandoverNotification(empName, tag, model, serial, branch, phone, actionType) {
+    const msg = `مرحباً ${empName}،\nنفيدكم بأنه تم تسجيل الأصل التقني بنجاح كعهدة عمل رسمية:\n• كود الأصل: ${tag}\n• نوع الجهاز: ${model}\n• الرقم التسلسلي: ${serial || 'N/A'}\n• مقر العمل: فرع ${branch}\nنرجو الحفاظ عليه وفق سياسة تقنية المعلومات لشركة مرني.`;
+    
+    document.getElementById('notifyMessagePreview').innerText = msg;
+    
+    const cleanPhone = formatWhatsAppPhone(phone);
+    const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    document.getElementById('notifyWhatsAppBtn').setAttribute('href', waUrl);
+
+    new bootstrap.Modal(document.getElementById('notifyModal')).show();
+}
+
+// ----------------- CRUD ASSETS -----------------
+
+// ----------------- CAMERA & PHOTO CAPTURE -----------------
+function handleAssetPhotoCapture(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            const maxDim = 600;
+            let width = img.width;
+            let height = img.height;
+            if (width > height) {
+                if (width > maxDim) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                }
+            } else {
+                if (height > maxDim) {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.75);
+            document.getElementById('formAssetPhotoData').value = compressedBase64;
+            document.getElementById('assetPhotoPreview').src = compressedBase64;
+            document.getElementById('photoPreviewContainer').style.display = 'block';
+            document.getElementById('btnRemovePhoto').style.display = 'inline-block';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeAssetPhoto() {
+    const photoData = document.getElementById('formAssetPhotoData');
+    if (photoData) photoData.value = '';
+    const preview = document.getElementById('assetPhotoPreview');
+    if (preview) preview.src = '';
+    const container = document.getElementById('photoPreviewContainer');
+    if (container) container.style.display = 'none';
+    const removeBtn = document.getElementById('btnRemovePhoto');
+    if (removeBtn) removeBtn.style.display = 'none';
+    const camInput = document.getElementById('formAssetCameraInput');
+    const galInput = document.getElementById('formAssetGalleryInput');
+    if (camInput) camInput.value = '';
+    if (galInput) galInput.value = '';
+}
+
+function viewPhoto(src, title) {
+    document.getElementById('fullPhotoImg').src = src;
+    document.getElementById('viewPhotoTitle').innerText = title || 'صورة الأصل';
+    new bootstrap.Modal(document.getElementById('viewPhotoModal')).show();
+}
+
+function openAddAssetModal() {
+    document.getElementById('assetModalTitle').innerText = 'إضافة أصل جديد وتعيين العهدة';
+    document.getElementById('assetEditId').value = '';
+    document.getElementById('formAssetTag').value = 'AST-' + Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('formAssetModel').value = '';
+    document.getElementById('formAssetSerial').value = '';
+    document.getElementById('formAssetAssigned').value = '';
+    removeAssetPhoto();
+    document.getElementById('formAssetPhone').value = '';
+    document.getElementById('formAssetAcc').value = 'شاحن أصلي + حقيبة + ماوس';
+        if (a.photo) {
+        document.getElementById('formAssetPhotoData').value = a.photo;
+        document.getElementById('assetPhotoPreview').src = a.photo;
+        document.getElementById('photoPreviewContainer').style.display = 'block';
+        document.getElementById('btnRemovePhoto').style.display = 'inline-block';
+    } else {
+        removeAssetPhoto();
+    }
+    new bootstrap.Modal(document.getElementById('assetModal')).show();
+}
+
+function editAsset(id) {
+    const a = getAssets().find(x => x.id === id);
+    if (!a) return;
+    document.getElementById('assetModalTitle').innerText = 'تعديل بيانات الأصل';
+    document.getElementById('assetEditId').value = a.id;
+    document.getElementById('formAssetTag').value = a.tag;
+    document.getElementById('formAssetBranch').value = a.branch;
+    document.getElementById('formAssetCategory').value = a.category;
+    document.getElementById('formAssetModel').value = a.model;
+    document.getElementById('formAssetSerial').value = a.serial || '';
+    document.getElementById('formAssetAssigned').value = a.assigned || '';
+    document.getElementById('formAssetPhone').value = a.phone || '';
+    document.getElementById('formAssetStatus').value = a.status;
+    document.getElementById('formAssetAcc').value = a.acc || '';
+    new bootstrap.Modal(document.getElementById('assetModal')).show();
+}
+
+function saveAsset() {
+    const tag = document.getElementById('formAssetTag').value.trim();
+    const model = document.getElementById('formAssetModel').value.trim();
+    const branch = document.getElementById('formAssetBranch').value;
+    const category = document.getElementById('formAssetCategory').value;
+    const serial = document.getElementById('formAssetSerial').value.trim();
+    const assigned = document.getElementById('formAssetAssigned').value.trim();
+    const phone = document.getElementById('formAssetPhone').value.trim();
+    const status = document.getElementById('formAssetStatus').value;
+    const acc = document.getElementById('formAssetAcc').value.trim();
+
+    if (!tag || !model) { alert('يرجى كتابة كود الأصل والموديل'); return; }
+
+    const editId = document.getElementById('assetEditId').value;
+    let list = getAssets();
+
+    if (editId) {
+        const idx = list.findIndex(x => x.id === parseInt(editId));
+        if (idx !== -1) {
+            list[idx] = { ...list[idx], tag, branch, category, model, serial, assigned, phone, status, acc };
+        }
+    } else {
+        list.unshift({ id: Date.now(), tag, branch, category, model, serial, assigned, phone, status, acc });
+        // توثيق حركة في السجل
+        if (assigned) {
+            let mov = getMovements();
+            const now = new Date();
+            mov.unshift({
+                id: Date.now(),
+                tag,
+                model,
+                fromUser: 'مستودع شركة مرني',
+                toUser: assigned,
+                phone,
+                branch,
+                date: now.toISOString().split('T')[0] + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                reason: 'تسليم عهدة جهاز جديد'
+            });
+            localStorage.setItem(STORAGE_KEYS.MOVEMENTS, JSON.stringify(mov));
+        }
+    }
+
+    localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(list));
+    bootstrap.Modal.getInstance(document.getElementById('assetModal')).hide();
+    renderAssetsTable();
+    updateDashboard();
+
+    // إشعار الموظف عند الإضافة
+    if (assigned && !editId) {
+        showHandoverNotification(assigned, tag, model, serial, branch, phone, 'إضافة أصل');
+    }
+}
+
+function deleteAsset(id) {
+    if (!confirm('حذف هذا الأصل نهائياً؟')) return;
+    const list = getAssets().filter(x => x.id !== id);
+    localStorage.setItem(STORAGE_KEYS.ASSETS, JSON.stringify(list));
+    renderAssetsTable();
+    updateDashboard();
+}
+
+// ----------------- BARCODE & QR GENERATOR -----------------
+function showBarcodeModal(id) {
+    const a = getAssets().find(x => x.id === id);
+    if (!a) return;
+
+    document.getElementById('lblBranch').innerText = 'فرع ' + a.branch;
+    document.getElementById('lblTag').innerText = a.tag;
+    document.getElementById('lblModel').innerText = a.model;
+    document.getElementById('lblSerial').innerText = 'S/N: ' + (a.serial || 'N/A');
+    document.getElementById('lblUser').innerText = a.assigned ? 'المستلم: ' + a.assigned : 'بالمخزن';
+
+
+
+    const qrContainer = document.getElementById('qrcodeCanvas');
+    qrContainer.innerHTML = '';
+    try {
+        const qrPayload = `شركة مرني | ITAM\nكود الأصل: ${a.tag}\nالجهاز: ${a.model}\nالسيريال: ${a.serial || 'N/A'}\nالفرع: ${a.branch}\nالمستلم: ${a.assigned || 'بالمخزن'}`;
+        new QRCode(qrContainer, {
+            text: unescape(encodeURIComponent(qrPayload)),
+            width: 145,
+            height: 145,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    } catch (e) { console.error(e); }
+
+    new bootstrap.Modal(document.getElementById('barcodePrintModal')).show();
+}
+
+function printStickerModal() {
+    const content = document.getElementById('printableBarcodeContainer').innerHTML;
+    const printWin = window.open('', '_blank', 'width=450,height=550');
+    if (!printWin) { window.print(); return; }
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>طباعة ملصق الأصل - شركة مرني</title>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800&display=swap" rel="stylesheet">
+            <style>
+                body { margin: 0; padding: 10px; font-family: 'Cairo', sans-serif; text-align: center; }
+                @page { size: 70mm 50mm; margin: 0; }
+            </style>
+        </head>
+        <body>
+            <div style="width: 280px; margin: 0 auto; border: 2px solid #000; padding: 10px; border-radius: 8px;">
+                ${content}
+            </div>
+            <script>window.onload = function() { window.print(); setTimeout(() => { window.close(); }, 800); };<\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+}
+
+// ----------------- OFFICIAL A4 REPORTS & CUSTODY -----------------
+function printOfficialInventoryReport() {
+    const list = getAssets();
+    const branch = document.getElementById('reportBranchFilter')?.value || '';
+    const status = document.getElementById('reportStatusFilter')?.value || '';
+    const filtered = list.filter(a => (!branch || a.branch === branch) && (!status || a.status === status));
+
+    let rowsHtml = '';
+    filtered.forEach((a, i) => {
+        rowsHtml += `
+            <tr>
+                <td style="text-align:center;">${i + 1}</td>
+                <td style="font-weight:bold; font-family:monospace;">${a.tag}</td>
+                <td>${a.branch}</td>
+                <td>${a.model}</td>
+                <td style="font-family:monospace;">${a.serial || '-'}</td>
+                <td>${a.status === 'In Use' ? 'قيد العمل' : 'بالمخزن'}</td>
+                <td>${a.assigned || 'غير مسند'}</td>
+            </tr>
+        `;
+    });
+
+    const printWin = window.open('', '_blank', 'width=1000,height=750');
+    if (!printWin) { window.print(); return; }
+
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>تقرير جرد أصول الـ IT الرسمي - شركة مرني</title>
+            <style>
+                body { font-family: 'Cairo', sans-serif; padding: 25px; direction: rtl; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #cbd5e1; padding: 8px; font-size: 12px; }
+                th { background-color: #f1f5f9; font-weight: bold; }
+                .header { border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="${MORNI_LOGO_SRC}" style="height:55px;">
+                    <div>
+                        <h2 style="margin:0;">شركة مرني</h2>
+                        <h4 style="margin:4px 0 0 0; color:#0284c7;">تقرير جرد الأصول والأجهزة الرسمي - ${branch || 'كافة الفروع الخمسة'}</h4>
+                    </div>
+                </div>
+                <div style="text-align:left; font-size:12px;">
+                    <div>تاريخ الاستخراج: ${new Date().toLocaleDateString('ar-SA')}</div>
+                    <div>إجمالي الأصول: <strong>${filtered.length} أصل</strong></div>
+                </div>
+            </div>
+            <table>
+                <thead><tr><th>#</th><th>الصورة</th>
+                                    <th>كود الأصل</th><th>الفرع</th><th>الموديل</th><th>السيريال S/N</th><th>الحالة</th><th>المستلم</th></tr></thead>
+                <tbody>${rowsHtml}</tbody>
+            </table>
+            <div style="display:flex; justify-content:space-between; margin-top:50px; text-align:center;">
+                <div><strong>مسؤول الجرد:</strong> ....................</div>
+                <div><strong>مدير تقنية المعلومات:</strong> ....................</div>
+                <div><strong>الختم الرسمي:</strong> ....................</div>
+            </div>
+            <script>window.onload = function() { window.print(); setTimeout(() => { window.close(); }, 1000); };<\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+}
+
+function printCustodyHandoverSheet(id) {
+    const a = getAssets().find(x => x.id === id);
+    if (!a) return;
+
+    const printWin = window.open('', '_blank', 'width=900,height=700');
+    if (!printWin) { window.print(); return; }
+
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>محضر تسليم عهدة تقنية - ${a.tag}</title>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+            <style>
+                body { font-family: 'Cairo', sans-serif; padding: 30px; direction: rtl; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th, td { border: 1px solid #334155; padding: 10px; text-align: center; }
+                th { background-color: #f1f5f9; }
+                .header { border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <img src="${MORNI_LOGO_SRC}" style="height:60px;">
+                    <div>
+                        <h2 style="margin:0;">شركة مرني</h2>
+                        <h4 style="margin:4px 0 0 0; color:#0284c7;">إقرار ومحضر تسليم عهدة تقنية رسمية</h4>
+                    </div>
+                </div>
+                <div style="text-align:left; font-size:12px;">
+                    <div>تاريخ المستند: ${new Date().toLocaleDateString('ar-SA')}</div>
+                    <div>الفرع: فرع ${a.branch}</div>
+                </div>
+            </div>
+            <p style="font-size:14px; line-height:1.8;">
+                أقر أنا الموقع أدناه بأنني قد استلمت الجهاز التقني المبين بياناته بالجدول أدناه بحالة ممتازة وصالحة للعمل، وتعتبر في عهدتي ومسؤوليتي الشخصية لأداء مهام العمل، وأتعهد بالمحافظة عليها وإعادتها لقسم تقنية المعلومات عند الطلب:
+            </p>
+            <table>
+                <thead><tr><th>كود الأصل (Tag)</th><th>نوع وموديل الجهاز</th><th>الرقم التسلسلي S/N</th><th>الملحقات المسلمة</th><th>اسم المستلم</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight:bold;">${a.tag}</td>
+                        <td>${a.model}</td>
+                        <td style="font-family:monospace;">${a.serial || '-'}</td>
+                        <td>${a.acc || 'شاحن أصلي + حقيبة + ماوس'}</td>
+                        <td style="font-weight:bold;">${a.assigned || 'غير مسند'}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="display:flex; justify-content:space-between; margin-top:60px; text-align:center;">
+                <div><strong>توقيع المستلم (صاحب العهدة)</strong><div style="height:50px;"></div><div>...........................</div></div>
+                <div><strong>مسؤول الـ IT</strong><div style="height:50px;"></div><div>...........................</div></div>
+                <div><strong>ختم واعتماد الإدارة</strong><div style="height:50px;"></div><div>...........................</div></div>
+            </div>
+            <script>window.onload = function() { window.print(); setTimeout(() => { window.close(); }, 1000); };<\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+}
+
+function printTransferReceipt(tag, newHolder, branch, dateStr) {
+    const printWin = window.open('', '_blank', 'width=800,height=600');
+    if (!printWin) { window.print(); return; }
+    printWin.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>إيصال نقل عهدة - ${tag}</title>
+            <style>
+                body { font-family: 'Cairo', sans-serif; padding: 30px; direction: rtl; }
+                .box { border: 2px solid #0284c7; padding: 20px; border-radius: 12px; }
+            </style>
+        </head>
+        <body>
+            <div class="box">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ccc; padding-bottom:10px;">
+                    <img src="${MORNI_LOGO_SRC}" style="height:45px;">
+                    <h3>إيصال حركة نقل عهدة أصل تقني</h3>
+                </div>
+                <div style="margin:20px 0; font-size:15px; line-height:2;">
+                    <div><strong>كود الأصل:</strong> ${tag}</div>
+                    <div><strong>المستلم الجديد:</strong> ${newHolder}</div>
+                    <div><strong>الفرع:</strong> فرع ${branch}</div>
+                    <div><strong>التاريخ:</strong> ${dateStr}</div>
+                </div>
+                <div style="margin-top:40px; display:flex; justify-content:space-between; text-align:center;">
+                    <div>توقيع المستلم الجديد: ......................</div>
+                    <div>توقيع مسؤول تقنية المعلومات: ......................</div>
+                </div>
+            </div>
+            <script>window.onload = function() { window.print(); setTimeout(() => { window.close(); }, 800); };<\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+}
+
+// ----------------- OTHER MODALS (USERS, TICKETS, NET, LICENSES) -----------------
+function openAddUserModal() {
+    document.getElementById('formUserName').value = '';
+    document.getElementById('formUserPhone').value = '';
+    new bootstrap.Modal(document.getElementById('userModal')).show();
+}
+
+function saveUserRecord() {
+    const name = document.getElementById('formUserName').value.trim();
+    const phone = document.getElementById('formUserPhone').value.trim();
+    if (!name) return;
+    const list = getUsers();
+    list.push({
+        id: Date.now(),
+        name,
+        phone,
+        role: document.getElementById('formUserRole').value,
+        branch: document.getElementById('formUserBranch').value
+    });
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(list));
+    renderUsersTable();
+    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+}
+
+function deleteUser(id) {
+    if (!confirm('حذف هذا المستخدم؟')) return;
+    const list = getUsers().filter(x => x.id !== id);
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(list));
+    renderUsersTable();
+}
+
+function openAddTicketModal() {
+    document.getElementById('formTicketReq').value = '';
+    document.getElementById('formTicketTitle').value = '';
+    document.getElementById('formTicketPhone').value = '';
+    new bootstrap.Modal(document.getElementById('ticketModal')).show();
+}
+
+function saveEmployeeTicket() {
+    const req = document.getElementById('formTicketReq').value.trim();
+    const title = document.getElementById('formTicketTitle').value.trim();
+    const branch = document.getElementById('formTicketBranch').value;
+    const phone = document.getElementById('formTicketPhone').value.trim();
+    if (!req || !title) return;
+
+    const list = getTickets();
+    list.unshift({
+        id: Date.now(),
+        number: `TCK-${Math.floor(100 + Math.random() * 900)}`,
+        branch,
+        title,
+        requester: req,
+        phone,
+        priority: 'عادية',
+        status: 'Open',
+        resolvedAt: '-'
+    });
+    localStorage.setItem(STORAGE_KEYS.TICKETS, JSON.stringify(list));
+    renderTicketsTable();
+    updateDashboard();
+    bootstrap.Modal.getInstance(document.getElementById('ticketModal')).hide();
+}
+
+function resolveTicket(id) {
+    let list = getTickets();
+    const t = list.find(x => x.id === id);
+    if (!t) return;
+    t.status = 'Resolved';
+    const now = new Date();
+    t.resolvedAt = now.toISOString().split('T')[0] + ' ' + now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    localStorage.setItem(STORAGE_KEYS.TICKETS, JSON.stringify(list));
+    renderTicketsTable();
+    updateDashboard();
+}
+
+function openAddNetModal() {
+    new bootstrap.Modal(document.getElementById('networkModal')).show();
+}
+
+function saveNetworkDevice() {
+    const host = document.getElementById('formNetHost').value.trim();
+    const model = document.getElementById('formNetModel').value.trim();
+    const ip = document.getElementById('formNetIP').value.trim();
+    if (!host || !ip) return;
+    const list = getNetwork();
+    list.push({
+        id: Date.now(),
+        branch: document.getElementById('formNetBranch').value,
+        host,
+        model,
+        ip,
+        rack: document.getElementById('formNetRack').value.trim() || 'Rack 01',
+        status: 'Online'
+    });
+    localStorage.setItem(STORAGE_KEYS.NETWORK, JSON.stringify(list));
+    renderNetworkTable();
+    bootstrap.Modal.getInstance(document.getElementById('networkModal')).hide();
+}
+
+function deleteNetwork(id) {
+    if (!confirm('حذف الجهاز؟')) return;
+    localStorage.setItem(STORAGE_KEYS.NETWORK, JSON.stringify(getNetwork().filter(x => x.id !== id)));
+    renderNetworkTable();
+}
+
+function openAddLicenseModal() {
+    new bootstrap.Modal(document.getElementById('licenseModal')).show();
+}
+
+function saveLicenseRecord() {
+    const name = document.getElementById('formLicName').value.trim();
+    if (!name) return;
+    const list = getLicenses();
+    list.push({
+        id: Date.now(),
+        name,
+        vendor: document.getElementById('formLicVendor').value.trim(),
+        key: document.getElementById('formLicKey').value.trim(),
+        total: parseInt(document.getElementById('formLicTotal').value || 10),
+        used: parseInt(document.getElementById('formLicUsed').value || 0)
+    });
+    localStorage.setItem(STORAGE_KEYS.LICENSES, JSON.stringify(list));
+    renderLicensesTable();
+    bootstrap.Modal.getInstance(document.getElementById('licenseModal')).hide();
+}
+
+function exportAssetsCSV() {
+    const list = getAssets();
+    let csv = "\uFEFFكود الأصل,الفرع,الفئة,الموديل,السيريال,الحالة,المستلم,الجوال\n";
+    list.forEach(a => { csv += `"${a.tag}","${a.branch}","${a.category}","${a.model}","${a.serial || ''}","${a.status}","${a.assigned || ''}","${a.phone || ''}"\n`; });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "morni_it_assets.csv";
+    link.click();
+}
+
+function toggleMobileSidebar() {
+    const sidebar = document.getElementById('mainSidebar') || document.querySelector('.sidebar');
+    const backdrop = document.getElementById('mobileSidebarBackdrop');
+    if (sidebar) sidebar.classList.toggle('mobile-open');
+    if (backdrop) backdrop.classList.toggle('active');
+}
+
+function toggleLanguage() {
+    const isAr = document.documentElement.dir === 'rtl';
+    document.documentElement.dir = isAr ? 'ltr' : 'rtl';
+    document.documentElement.lang = isAr ? 'en' : 'ar';
+    document.getElementById('sidebarLangBtn').innerText = isAr ? 'العربية (AR)' : 'English (EN)';
+}
+
+function filterAssetsCategory(cat) {
+    switchTab('assets');
+    const input = document.getElementById('assetSearchInput');
+    if (input) {
+        input.value = cat === 'Laptop' ? 'Laptop' : (cat === 'Accessories' ? 'Accessories' : '');
+        renderAssetsTable();
+    }
+}
+
+// ----------------- DASHBOARD CHARTS -----------------
+let modelBarChartInstance = null;
+let modelPieChartInstance = null;
+
+function updateDashboard() {
+    const assets = getAssets();
+    const tickets = getTickets();
+    const movements = getMovements();
+
+    const inUse = assets.filter(a => a.status === 'In Use').length;
+    const inStock = assets.filter(a => a.status === 'In Stock').length;
+    const inMaint = assets.filter(a => a.status === 'In Maintenance').length;
+    const openTickets = tickets.filter(t => t.status !== 'Resolved').length;
+
+    const totalCount = assets.length;
+    document.getElementById('top-card-assets').innerText = totalCount;
+    document.getElementById('stat-total-assets').innerText = totalCount;
+    document.getElementById('stat-active-assets').innerText = inUse;
+    document.getElementById('stat-open-maint').innerText = inMaint;
+    document.getElementById('stat-move-today').innerText = movements.length;
+    document.getElementById('stat-tickets-count').innerText = openTickets;
+
+    const modelsCount = {};
+    assets.forEach(a => {
+        const m = a.model.split(' ')[0] + ' ' + (a.model.split(' ')[1] || '');
+        modelsCount[m] = (modelsCount[m] || 0) + 1;
+    });
+
+    const mLabels = Object.keys(modelsCount);
+    const mData = Object.values(modelsCount);
+
+    const bCtx = document.getElementById('modelBarChart')?.getContext('2d');
+    if (bCtx) {
+        if (modelBarChartInstance) modelBarChartInstance.destroy();
+        modelBarChartInstance = new Chart(bCtx, {
+            type: 'bar',
+            data: {
+                labels: mLabels.length ? mLabels : ['Lenovo T14', 'Dell OptiPlex', 'HP EliteBook', 'MacBook Pro'],
+                datasets: [{
+                    label: 'العدد',
+                    data: mData.length ? mData : [25, 18, 14, 10],
+                    backgroundColor: ['#00b4d8', '#3a86ff', '#f59e0b', '#10b981', '#a855f7'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+                    y: { ticks: { color: '#f8fafc', font: { family: 'Cairo' } }, grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    const pCtx = document.getElementById('modelPieChart')?.getContext('2d');
+    if (pCtx) {
+        if (modelPieChartInstance) modelPieChartInstance.destroy();
+        modelPieChartInstance = new Chart(pCtx, {
+            type: 'doughnut',
+            data: {
+                labels: mLabels.length ? mLabels : ['Lenovo T14', 'Dell OptiPlex', 'HP EliteBook', 'MacBook Pro'],
+                datasets: [{
+                    data: mData.length ? mData : [25, 18, 14, 10],
+                    backgroundColor: ['#00b4d8', '#e63946', '#3a86ff', '#7209b7', '#f59e0b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#94a3b8', font: { family: 'Cairo', size: 11 } } }
+                }
+            }
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    initData();
+    updateDashboard();
+    renderAssetsTable();
+    renderMovementTable();
+    renderReportsTable();
+    renderUsersTable();
+    renderTicketsTable();
+    renderNetworkTable();
+    renderCustodyTable();
+    renderLifecycleHub();
+    renderLicensesTable();
+});
+</script>
+</body>
+</html>
